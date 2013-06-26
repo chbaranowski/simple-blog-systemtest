@@ -67,3 +67,7 @@ task generateDataSetDsl(dependsOn: 'dataSetModelClasses', type: JavaExec) {
 eclipseClasspath.dependsOn("generateDataSetDsl")
 compileDataSetDslJava.dependsOn("generateDataSetDsl")
 compileTestGroovy.dependsOn("compileDataSetDslJava")
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.6'
+}
