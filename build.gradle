@@ -1,0 +1,69 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+}
+
+ext {
+  drivers             = ["firefox"]
+  groovyVersion       = "2.0.8"
+  gebVersion          = "0.7.2"
+  seleniumVersion     = "2.33.0"
+  spockVersion        = "0.7-groovy-2.0"
+  commonsdbcpVersion  = "1.4"
+}
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+dependencies {
+  testCompile "junit:junit:4.11"
+  testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+  testCompile "org.spockframework:spock-core:$spockVersion"
+  
+  drivers.each { driver ->
+    testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
+  }
+  
+  testCompile "org.codehaus.geb:geb-core:$gebVersion"
+  
+  testCompile "com.seitenbau.testing:common:1.0.0-SNAPSHOT"
+  testCompile "com.seitenbau.testing:database:1.0.0-SNAPSHOT"
+  testCompile "commons-dbcp:commons-dbcp:$commonsdbcpVersion"
+  
+  testRuntime "org.slf4j:slf4j-nop:1.7.4"
+}
+
+sourceSets {
+  dataSetModel {
+    java {
+      srcDir 'src/test/dataSetModel'
+    }
+    compileClasspath += configurations.testCompile
+    runtimeClasspath += configurations.testRuntime
+  }
+  dataSetDsl {
+    java {
+      srcDir "build/src/dataSetDsl"
+    }
+    compileClasspath = configurations.testCompile
+  }
+  test {
+    compileClasspath += sourceSets.dataSetDsl.output
+    runtimeClasspath += sourceSets.dataSetDsl.output
+  }
+}
+
+task generateDataSetDsl(dependsOn: 'dataSetModelClasses', type: JavaExec) {
+  inputs.dir  file("src/test/dataSetModel/model")
+  outputs.dir file("$buildDir/src/dataSetDsl")
+  main      = 'blog.db.schema.Generator'
+  args      = ["build/src/dataSetDsl"]
+  classpath = sourceSets.dataSetModel.runtimeClasspath
+}
+
+eclipseClasspath.dependsOn("generateDataSetDsl")
+compileDataSetDslJava.dependsOn("generateDataSetDsl")
+compileTestGroovy.dependsOn("compileDataSetDslJava")
