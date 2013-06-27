@@ -30,8 +30,8 @@ dependencies {
   
   testCompile "org.codehaus.geb:geb-core:$gebVersion"
   
-  testCompile "com.seitenbau.testing:common:1.0.0-SNAPSHOT"
-  testCompile "com.seitenbau.testing:database:1.0.0-SNAPSHOT"
+  testCompile "com.seitenbau.testing:common:1.0.0.pre1"
+  testCompile "com.seitenbau.testing:database:1.0.0.pre1"
   testCompile "commons-dbcp:commons-dbcp:$commonsdbcpVersion"
   
   testRuntime "org.slf4j:slf4j-nop:1.7.4"
