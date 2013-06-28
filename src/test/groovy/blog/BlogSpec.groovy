@@ -52,9 +52,9 @@ class BlogSpec extends GebSpec
         post(index).title() == posts[index].title
         post(index).content() == posts[index].content
       }
-      "OSGi" in post(0).tags() 
-      "Java" in post(0).tags()
-      post(1).tags() == []
+      //"OSGi" in post(0).tags() 
+      //"Java" in post(0).tags()
+      //post(1).tags() == []
   }
   
 }
