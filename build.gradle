@@ -8,7 +8,7 @@ repositories {
 }
 
 ext {
-  drivers             = ["firefox"]
+  drivers             = ["firefox", "htmlunit"]
   groovyVersion       = "2.0.8"
   gebVersion          = "0.7.2"
   seleniumVersion     = "2.33.0"
@@ -68,6 +68,15 @@ task generateDataSetDsl(dependsOn: 'dataSetModelClasses', type: JavaExec) {
 eclipseClasspath.dependsOn("generateDataSetDsl")
 compileDataSetDslJava.dependsOn("generateDataSetDsl")
 compileTestGroovy.dependsOn("compileDataSetDslJava")
+
+drivers.each { driver ->
+  task "${driver}Test"(type: Test) {
+      testReportDir = reporting.file("$name/tests")
+      testResultsDir = file("$buildDir/test-results/$name")
+      systemProperty "geb.build.reportsDir", reporting.file("$name/geb")
+      systemProperty "geb.env", driver
+  }
+}
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.6'
