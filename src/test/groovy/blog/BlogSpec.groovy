@@ -56,4 +56,9 @@ class BlogSpec extends GebSpec
       post(1).tags() == []
   }
   
+  def "test fails"(){
+      expect:
+          1 == 2
+  }
+  
 }
