@@ -49,12 +49,11 @@ class BlogSpec extends GebSpec
       def posts = []
       dataSet.postTable.foreach { posts.add(it) }
       for(int index= 0; index < posts.size(); index++) {
-        post(index).title() == posts[index].title
-        post(index).content() == posts[index].content
+        assert post(index).title() == posts[index].title
       }
-      //"OSGi" in post(0).tags() 
-      //"Java" in post(0).tags()
-      //post(1).tags() == []
+      "OSGi" in post(0).tags() 
+      "Java" in post(0).tags()
+      post(1).tags() == []
   }
   
 }
