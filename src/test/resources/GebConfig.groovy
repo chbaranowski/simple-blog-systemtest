@@ -6,10 +6,10 @@
 import org.openqa.selenium.firefox.*
 import org.openqa.selenium.htmlunit.*
  
-waiting { timeout = 10 }
+waiting { timeout = 30 }
 
 driver = {
-  new FirefoxDriver()
+  new HtmlUnitDriver()
 }
 
 environments {
