@@ -8,5 +8,6 @@ class BlogDataSetRefs {
   static TagRef OSGi = new TagRef()
 
   static PostRef FIRST_POST = new PostRef()
+  static PostRef SECOND_POST = new PostRef()
 
 }

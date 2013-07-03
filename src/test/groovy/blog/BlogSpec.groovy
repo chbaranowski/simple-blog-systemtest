@@ -8,6 +8,7 @@ import spock.lang.Specification
 
 import blog.config.TestConfig;
 import blog.data.BlogDataSet;
+import blog.db.PostTable.RowBuilder_Post;
 import blog.pages.BlogPage;
 import blog.pages.LoginPage;
 import blog.pages.PostListPage;
@@ -32,30 +33,31 @@ class BlogSpec extends GebSpec
       dataSet.tables {
         postTable.rows {
           REF          | id  | title       | content
-          FIRST_POST   |  1  | "One Title" | "<p> Some Content <b>1</b> </p>"
-           _           |  2  | "Two Title" | "Some Content 2"
+          FIRST_POST   |  1  | "One Title" | "Some Content"
+          SECOND_POST  |  2  | "Two Title" | "Some Content 2"
         }
         tagTable.rows {
           REF    |  name
           OSGi   |  "OSGi"
           JAVA   |  "Java"
+          _      |  "CVS"
         }
       }
       dataSet.relations {
         FIRST_POST.hasTags(OSGi, JAVA)
+        SECOND_POST.hasTags(JAVA)
       }
       databaseTesterRule.cleanInsert(dataSet)
     when: "invoke the blog"
       to BlogPage
     then: "verify that the posts from the database are shown on the blog site"
-      def posts = []
-      dataSet.postTable.foreach { posts.add(it) }
-      for(int index= 0; index < posts.size(); index++) {
-        assert post(index).title() == posts[index].title
+      dataSet.postTable.findWhere.rows.eachWithIndex { dbPost, index ->
+          assert post(index).title()     == dbPost.title
+          assert post(index).content()   == dbPost.content
+          dataSet.postTagTable.findWhere.rows
+              .findAll { it.postsId == dbPost.id } 
+              .each { assert it.tagsName in post(index).tags() }
       }
-      "OSGi" in post(0).tags() 
-      "Java" in post(0).tags()
-      post(1).tags() == []
   }
   
   def "create new Blog post"() {
@@ -78,7 +80,7 @@ class BlogSpec extends GebSpec
                        """
           tags       = 'CD, Java'
           savePostButton.click()
-      then:  
+      then: "Post count should be 1" 
           postListCount == 1
   }
   
@@ -113,7 +115,7 @@ class BlogSpec extends GebSpec
                        """
           tags       = 'CD, Java'
           savePostButton.click()
-      then:
+      then: "Post count should be 2" 
           postListCount == 2
     }
   
