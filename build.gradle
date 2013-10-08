@@ -4,7 +4,7 @@ apply plugin: 'eclipse'
 repositories {
   mavenCentral()
   mavenLocal()
-  maven { url 'http://192.168.42.23:4242/artifactory/simple-blog-repo/' }
+  maven { url 'http://192.168.42.23:8081/artifactory/simple-blog-repo/' }
 }
 
 ext {
